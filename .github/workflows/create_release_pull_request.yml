@@ -26,10 +26,10 @@ jobs:
       - name: Check Release PR exsitance
         id: pull_request_exists
         run: |
-          echo "::set-output name=count::$(gh pr list -B master | wc -l)"
+          echo "::set-output name=count::$(gh pr list -B main | wc -l)"
       
       - name: Create Release PR
         if: ${{ steps.pull_request_exists.outputs.count == 0 }}
         run: |
           now=$(TZ=Asia/Tokyo date +'%Y%m%d%H%M%S')
-          gh pr create -B master -l RELEASE -t "Release ${now}" -b ""
+          gh pr create -B main -l RELEASE -t "Release ${now}" -b ""
