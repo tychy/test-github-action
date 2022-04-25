@@ -1,0 +1,27 @@
+name: Create Release Pull Requests
+
+on:
+  push:
+    branches: [ develop ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Release PR exsitance
+        id: pull_request_exists
+        run: |
+          echo "::set-output name=count::$(gh pr list -B master | wc -l)"
+      
+      - name: Create Release PR
+        if: ${{ steps.pull_request_exists.outputs.count == 0 }}
+        run: |
+          now=$(TZ=Asia/Tokyo date +'%Y%m%d%H%M%S')
+          gh pr create -B master -l RELEASE -t "Release ${now}" -b "" -d
