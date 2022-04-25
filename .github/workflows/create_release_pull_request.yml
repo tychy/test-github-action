@@ -24,4 +24,4 @@ jobs:
         if: ${{ steps.pull_request_exists.outputs.count == 0 }}
         run: |
           now=$(TZ=Asia/Tokyo date +'%Y%m%d%H%M%S')
-          gh pr create -B master -l RELEASE -t "Release ${now}" -b "" -d
+          gh pr create -B master -l RELEASE -t "Release ${now}" -b ""
