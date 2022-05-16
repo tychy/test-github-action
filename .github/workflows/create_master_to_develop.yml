@@ -31,7 +31,7 @@ jobs:
       - name: Check diff
         id: diff
         run: |
-          git fetch origin master:master
+          git fetch origin main:main
           git fetch origin develop:develop
           echo "::set-output name=count::$(git diff main develop --name-only | wc -l)"
       
