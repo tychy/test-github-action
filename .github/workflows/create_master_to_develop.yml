@@ -28,7 +28,12 @@ jobs:
         run: |
           echo "::set-output name=count::$(gh pr list --head main -B develop | wc -l)"
       
+      - name: Check diff
+        id: diff
+        run: |
+          echo "::set-output name=count::$(git diff master...develop | wc -l)"
+      
       - name: Create a PR
-        if: ${{ steps.pull_request_exists.outputs.count == 0 }}
+        if: ${{ steps.pull_request_exists.outputs.count == 0 && steps.diff.outputs.count == 0}}
         run: |
           gh pr create -B develop --head main -t "Update develop from main" -b ""
