@@ -31,7 +31,6 @@ jobs:
       - name: Check diff
         id: diff
         run: |
-          git fetch origin develop:develop
           echo "::set-output name=count::$(git diff origin/develop..HEAD --name-only | wc -l)"
       
       - name: Create a PR
