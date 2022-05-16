@@ -31,7 +31,9 @@ jobs:
       - name: Check diff
         id: diff
         run: |
-          echo "::set-output name=count::$(git diff origin/main origin/develop --name-only | wc -l)"
+          git fetch origin master:master
+          git fetch origin develop:develop
+          echo "::set-output name=count::$(git diff main develop --name-only | wc -l)"
       
       - name: Create a PR
         if: ${{ steps.pull_request_exists.outputs.count == 0 && steps.diff.outputs.count == 0}}
