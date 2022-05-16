@@ -32,7 +32,9 @@ jobs:
         id: diff
         run: |
           git fetch origin develop:develop
-          echo "::set-output name=count::$(git diff origin/develop..HEAD --name-only | wc -l)"
+          git diff origin/develop..HEAD --name-only > diff_fnames
+          cat diff_fnames
+          echo "::set-output name=count::$(wc -l diff_fnames)"
       
       - name: Create a PR
         if: ${{ steps.pull_request_exists.outputs.count == 0 && steps.diff.outputs.count != 0}}
