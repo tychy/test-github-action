@@ -19,5 +19,4 @@ jobs:
       
       - name: Create Release PR
         run: |
-          now=$(TZ=Asia/Tokyo date +'%Y%m%d%H%M%S')
           echo $(git branch -a --list 'pj-*')
