@@ -1,0 +1,23 @@
+name: Update PJ Branches
+
+on:
+  push:
+    branches: [ master ]
+    types: [ closed ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create Release PR
+        run: |
+          now=$(TZ=Asia/Tokyo date +'%Y%m%d%H%M%S')
+          git branch -a --list 'pj-*'
