@@ -2,7 +2,7 @@ name: Update PJ Branches
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     types: [ closed ]
 
   workflow_dispatch:
