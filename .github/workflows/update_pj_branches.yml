@@ -27,6 +27,6 @@ jobs:
 
       - run: echo "${{ steps.pj_list.outputs.branches}}"
       - run: |
-          for branch in ${steps.pj_list.outputs.branches//,/ }; do
+          for branch in ${${{steps.pj_list.outputs.branches}}//,/ }; do
             echo $branch
           done
