@@ -1,7 +1,7 @@
 name: Update PJ Branches
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
     types: [ closed ]
 
