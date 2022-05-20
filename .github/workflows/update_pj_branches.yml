@@ -20,6 +20,8 @@ jobs:
       - name: List PJ branches
         id: pj_list
         run: |
+          git remote set-branches origin '*'
+          git fetch
           pj_list=$(git branch -a --list 'pj-*')
           echo "::set-output name=branches::$pj_list"
 
