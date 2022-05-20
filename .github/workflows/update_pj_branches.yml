@@ -22,7 +22,7 @@ jobs:
         run: |
           git remote set-branches origin '*'
           git fetch
-          pj_list=$(git branch -r --list '*/pj-*')
+          pj_list=$(git branch -r --list '*/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ', ' |sed 's/,$/\n/')
           echo "::set-output name=branches::$pj_list"
 
       - run: echo "${{ steps.pj_list.outputs.branches}}"
