@@ -25,4 +25,4 @@ jobs:
           pj_list=$(git branch -r --list '*/pj-*')
           echo "::set-output name=branches::$pj_list"
 
-      - run: echo "${{ steps.pj_list.branches}}"
+      - run: echo "${{ steps.pj_list.outputs.branches}}"
