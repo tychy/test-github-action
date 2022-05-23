@@ -51,7 +51,7 @@ jobs:
                 "username": "PJ Updater",
                 "icon_emoji": ":ghost:",
                 "attachments": [{
-                  "title": "Conflict detected merging develop into develop_to_'${branch}'",
+                  "title": "Conflict detected merging develop into develop_to_'${branch}' on run ID '${GITHUB_RUN_ID}'",
                   "title_link": "'${GITHUB_SERVER_URL}'/'${GITHUB_REPOSITORY}'/action/runs/'${GITHUB_RUN_ID}'",
                   "color": "danger"
                 }]
