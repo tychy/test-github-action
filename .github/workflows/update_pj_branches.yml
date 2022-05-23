@@ -25,7 +25,7 @@ jobs:
           git fetch
           pj_list=$(git branch -r --list '*/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ' ' | awk '{gsub(/[^ ]+/,"\x22&\x22\x2C");print}' | sed 's/\x2C $//')
           echo $pj_list
-          pj_list_json=$(echo "["$pj_list"]" | jq -c)
+          pj_list_json=$(echo "["${pj_list}"]" | jq -c)
           echo $pj_list_json
           echo "::set-output name=branches::${pj_list_json}"
       
