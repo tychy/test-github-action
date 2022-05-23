@@ -49,10 +49,13 @@ jobs:
               git merge --abort
               PAYLOAD='{
                 "username": "Ghost",
-                "title": "Conflict detected merging develop into develop_to_'${branch}'",
-                "text": "Failed to merge develop into '${branch}'",
                 "icon_emoji": ":ghost:",
-                "color": "danger"
+                "text": "Failed to merge develop into '${branch}'",
+                "attachments": [{
+                  "title": "Conflict detected merging develop into develop_to_'${branch}'",
+                  "title_link": '"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"',
+                  "color": "danger"
+                }]
               }'
               body=$(echo $PAYLOAD | jq -c)
               curl -X POST -H "Content-Type: application/json" -d "$body" ${{ secrets.SLACK_WEBHOOK}}
