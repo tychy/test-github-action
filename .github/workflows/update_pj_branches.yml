@@ -41,8 +41,9 @@ jobs:
             git checkout develop_to_${branch}
             if git merge --no-ff --no-commit origin/develop; then
               echo "can be merged"
-              git diff --cached
-              git merge --abort
+              git merge --continue
+              git push origin develop_to_${branch}
+              gh pr create -B ${branch} --head develop_to_${branch} -t "Update ${branch} from develop" -b ""
             else
               echo "can notbe merged"
               git merge --abort
