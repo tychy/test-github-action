@@ -38,9 +38,11 @@ jobs:
       - name: Try to merge develop
         run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
-            git checkout develop_to_${branch}
-            canmerge=$(git merge --no-ff --no-commit origin/develop)
-            echo "can be merged -$(canmerge)- ??"
-            echo $canmerge
-            git merge --abort
+            if git checkout develop_to_${branch}; then
+              echo "can be merged"
+              git diff --cached
+              git merge --abort
+            else
+              echo "can notbe merged"
+            fi
           done
