@@ -49,10 +49,10 @@ jobs:
               git merge --abort
               jq -n '{
                 attachments: [{
-                  pretext: "Failed to merge develop into ${branch}",
+                  pretext: "Failed to merge develop into "${branch},
                   color: "danger",
-                  title: "Conflict detected merging develop into develop_to_${branch}",
-                  title_link: "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+                  title: "Conflict detected merging develop into develop_to_"${branch},
+                  title_link: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
                 }]
               }' | curl -H 'Content-Type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK }}
             fi
