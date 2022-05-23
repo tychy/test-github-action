@@ -27,7 +27,7 @@ jobs:
           echo $pj_list
           echo "["${pj_list}"]"
           echo "["${pj_list}"]" | jq -c
-          echo '::set-output name=branches::[${pj_list}]'
+          echo '::set-output name=branches::$(echo "["${pj_list}"]" | jq -c)'
     outputs:
       branches: ${{ steps.pj_list.outputs.branches}}
       
