@@ -53,7 +53,7 @@ jobs:
                 "text": "Failed to merge develop into '${branch}'",
                 "attachments": [{
                   "title": "Conflict detected merging develop into develop_to_'${branch}'",
-                  "title_link": '"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"',
+                  "title_link": '${GITHUB_SERVER_URL}'/'${GITHUB_REPOSITORY}'/actions/runs/'${GITHUB_RUN_ID}',
                   "color": "danger"
                 }]
               }'
