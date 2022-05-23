@@ -39,10 +39,10 @@ jobs:
         run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
             if git checkout develop_to_${branch}; then
+              echo "can notbe merged"
+            else
               echo "can be merged"
               git diff --cached
               git merge --abort
-            else
-              echo "can notbe merged"
             fi
           done
