@@ -16,7 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
       - name: List PJ branches
         id: pj_list
         run: |
@@ -24,7 +23,7 @@ jobs:
           git fetch
           pj_list=$(git branch -r --list '*/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ' ' |sed 's/ $/\n/')
           echo "::set-output name=branches::$pj_list"
-
+      
       - name: Create develop_to_pj branch 
       - run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
