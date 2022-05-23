@@ -25,8 +25,9 @@ jobs:
           pj_list=$(git branch -r --list '*/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ' ' |sed 's/ $/\n/')
           echo "::set-output name=branches::$pj_list"
 
-      - run: echo "${{ steps.pj_list.outputs.branches}}"
+      - name: Create develop_to_pj branch 
       - run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
-            echo $branch
+            git branch develop_to_${branch} origin/${branch}
+            git push origin develop_to_${branch}
           done
