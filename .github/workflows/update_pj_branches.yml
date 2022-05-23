@@ -29,7 +29,7 @@ jobs:
           echo "["${pj_list}"]" | jq -c
           echo '::set-output name=branches::[${pj_list}]'
     outputs:
-      branches: ${{ steps.list_pj_branches.outputs.branches}}
+      branches: ${{ steps.pj_list.outputs.branches}}
       
   update_pj_branches:
     needs: list_pj_branches
