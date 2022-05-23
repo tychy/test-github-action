@@ -37,7 +37,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-      - name: setup git config
+      - name: Setup git config
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
@@ -48,24 +48,37 @@ jobs:
           git branch develop_to_${{matrix.branch}} origin/${{matrix.branch}}
           git push origin develop_to_${{matrix.branch}}
       
-      - name: Try to merge develop
+      - name: Dry run git merge
+        id: dry_run
         run: |
           git checkout develop_to_${{matrix.branch}}
           if git merge --no-ff --no-commit origin/develop; then
             echo "develop can be merged into develop_to_${{matrix.branch}}"
+            echo "::set-output name=conflict::0"
+          else
+            echo "develop can not be merged into develop_to_${{matrix.branch}}"
+            echo "::set-output name=conflict::1"
+            
+          fi
+
+      - name: Merge
+        if: ${{ steps.dry_run.outputs.conflict == 0 }}
+        run: |
             git commit -m "Merge develop into develop_to_${{matrix.branch}}"
             git push origin develop_to_${{matrix.branch}}
             gh pr create -B ${{matrix.branch}} --head develop_to_${{matrix.branch}} -t "Update ${{matrix.branch}} from develop" -b ""
-          else
-            echo "develop can not be merged into develop_to_${{matrix.branch}}"
-            git merge --abort
-            payload='{
-              "attachments": [{
-                "title": "Conflict detected merging develop into develop_to_'${{matrix.branch}}' on run ID '${GITHUB_RUN_ID}'",
-                "title_link": "'${GITHUB_SERVER_URL}'/'${GITHUB_REPOSITORY}'/actions/runs/'${GITHUB_RUN_ID}'",
-                "color": "danger"
-              }]
-            }'
-            body=$(echo $payload | jq -c)
-            curl -X POST -H "Content-Type: application/json" -d "$body" ${{ secrets.SLACK_WEBHOOK}}
-          fi
+
+      - name: Abort and notice
+        if: ${{ steps.dry_run.outpus.conflict == 1 }}
+        run: |
+          git merge --abort
+          payload='{
+            "attachments": [{
+              "title": "Conflict detected merging develop into develop_to_'${{matrix.branch}}' on run ID '${GITHUB_RUN_ID}'",
+              "title_link": "'${GITHUB_SERVER_URL}'/'${GITHUB_REPOSITORY}'/actions/runs/'${GITHUB_RUN_ID}'",
+              "color": "danger"
+            }]
+          }'
+          body=$(echo $payload | jq -c)
+          curl -X POST -H "Content-Type: application/json" -d "$body" ${{ secrets.SLACK_WEBHOOK}}
+
