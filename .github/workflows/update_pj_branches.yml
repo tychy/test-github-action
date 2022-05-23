@@ -35,7 +35,7 @@ jobs:
         run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
             git checkout develop_to_${branch}
-            canmerge=$(git merge --no-ff --no-commit develop)
+            canmerge=$(git merge --no-ff --no-commit origin/develop)
             echo $canmerge
             git merge --abort
           done
