@@ -1,0 +1,51 @@
+name: Update PJ Branches
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: List PJ branches
+        id: pj_list
+        run: |
+          git remote set-branches origin '*'
+          git fetch
+          pj_list=$(git branch -r --list '*/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ' ' |sed 's/ $/\n/')
+          echo "::set-output name=branches::$pj_list"
+      
+      - name: Create develop_to_pj branch 
+        run: |
+          for branch in ${{steps.pj_list.outputs.branches}}; do
+            git branch develop_to_${branch} origin/${branch}
+            git push origin develop_to_${branch}
+          done
+      
+      - name: Try to merge develop
+        run: |
+          for branch in ${{steps.pj_list.outputs.branches}}; do
+            git checkout develop_to_${branch}
+            if git merge --no-ff --no-commit origin/develop; then
+              echo "can be merged"
+              git commit -m "Merge develop into develop_to_${branch}"
+              git push origin develop_to_${branch}
+              gh pr create -B ${branch} --head develop_to_${branch} -t "Update ${branch} from develop" -b ""
+            else
+              echo "can notbe merged"
+              git merge --abort
+            fi
+          done
