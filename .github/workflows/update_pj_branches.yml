@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update pj branches:
+  update_pj_branches:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     env:
