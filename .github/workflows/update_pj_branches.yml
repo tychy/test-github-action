@@ -43,6 +43,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Create develop_to_pj branch 
         run: |
+          git remote set-branches origin '*'
+          git fetch
           git branch develop_to_${{matrix.branch}} origin/${{matrix.branch}}
           git push origin develop_to_${{matrix.branch}}
       
