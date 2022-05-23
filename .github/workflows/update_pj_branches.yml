@@ -40,12 +40,20 @@ jobs:
           for branch in ${{steps.pj_list.outputs.branches}}; do
             git checkout develop_to_${branch}
             if git merge --no-ff --no-commit origin/develop; then
-              echo "can be merged"
+              echo "develop can be merged into develop_to_${branch}"
               git commit -m "Merge develop into develop_to_${branch}"
               git push origin develop_to_${branch}
               gh pr create -B ${branch} --head develop_to_${branch} -t "Update ${branch} from develop" -b ""
             else
-              echo "can notbe merged"
+              echo "develop can not be merged into develop_to_${branch}"
               git merge --abort
+              jq -n '{
+                attachments: [{
+                  pretext: "Failed to merge develop into ${branch}",
+                  color: "danger",
+                  title: "Conflict detected merging develop into develop_to_${branch}",
+                  title_link: "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+                }]
+              }' | curl -H 'Content-Type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK }}
             fi
           done
