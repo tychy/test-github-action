@@ -13,6 +13,15 @@ jobs:
     if: github.event.pull_request.merged == true
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SLAKC_PAYLOAD: |
+      PAYLOAD='{
+        "username": "Ghost",
+        "title": "no-message",
+        "title_link": "no-url",
+        "text": "no-message",
+        "icon_emoji": ":ghost:",
+        "color": "danger"
+      }'
 
     steps:
       - uses: actions/checkout@v3
@@ -47,13 +56,7 @@ jobs:
             else
               echo "develop can not be merged into develop_to_${branch}"
               git merge --abort
-              jq -n '{
-                attachments: [{
-                  pretext: "Failed to merge develop into "'"${branch}"'",
-                  color: "danger",
-                  title: "Conflict detected merging develop into develop_to_"'"${branch}"'",
-                  title_link: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
-                }]
-              }' | curl -H 'Content-Type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK }}
+              body=$(echo $PAYLOAD | jq -c '.text = ${branch}')
+              curl -X POST -H "Content-Type: application/json" -d "${body}" ${{ secrets.SLACK_WEBHOOK}}
             fi
           done
