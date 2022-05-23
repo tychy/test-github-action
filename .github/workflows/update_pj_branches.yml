@@ -25,7 +25,7 @@ jobs:
           echo "::set-output name=branches::$pj_list"
       
       - name: Create develop_to_pj branch 
-      - run: |
+        run: |
           for branch in ${{steps.pj_list.outputs.branches}}; do
             git branch develop_to_${branch} origin/${branch}
             git push origin develop_to_${branch}
