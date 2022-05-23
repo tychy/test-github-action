@@ -27,9 +27,9 @@ jobs:
           echo $pj_list
           echo "["${pj_list}"]"
           echo "["${pj_list}"]" | jq -c
-          pj_list_json=$(echo "["${pj_list}"]" | jq -c)
-          echo $pj_list_json
-          echo "::set-output name=branches::${pj_list_json}"
+          list=$(echo "["${pj_list}"]" | jq -c)
+          echo $list
+          echo "::set-output name=branches::${list}"
       
   update_pj_branches:
     needs: list_pj_branches
