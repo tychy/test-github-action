@@ -45,5 +45,6 @@ jobs:
               git merge --abort
             else
               echo "can notbe merged"
+              git merge --abort
             fi
           done
