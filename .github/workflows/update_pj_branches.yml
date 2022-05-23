@@ -49,8 +49,8 @@ jobs:
               git merge --abort
               PAYLOAD='{
                 "username": "Ghost",
-                "title": "Conflict detected merging develop into develop_to_$branch",
-                "text": "Failed to merge develop into ${branch}",
+                "title": "Conflict detected merging develop into develop_to_'${branch}'",
+                "text": "Failed to merge develop into '${branch}'",
                 "icon_emoji": ":ghost:",
                 "color": "danger"
               }'
