@@ -27,7 +27,7 @@ jobs:
           pj_json=$(echo "["${pj_list}"]" | jq -c)
           echo "::set-output name=branches::${pj_json}"
     outputs:
-      branches: ${{ steps.pj_list.outputs.branches}}
+      branches: ${{steps.pj_list.outputs.branches}}
       
   update_pj_branches:
     needs: list_pj_branches
@@ -37,29 +37,29 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     
     steps:
       - uses: actions/checkout@v3
       - name: Create develop_to_pj branch 
         run: |
-          git branch develop_to_${branch} origin/${branch}
-          git push origin develop_to_${branch}
+          git branch develop_to_${{matrix.branch}} origin/${{matrix.branch}}
+          git push origin develop_to_${{matrix.branch}}
       
       - name: Try to merge develop
         run: |
-          git checkout develop_to_${branch}
+          git checkout develop_to_${{matrix.branch}}
           if git merge --no-ff --no-commit origin/develop; then
-            echo "develop can be merged into develop_to_${branch}"
-            git commit -m "Merge develop into develop_to_${branch}"
-            git push origin develop_to_${branch}
-            gh pr create -B ${branch} --head develop_to_${branch} -t "Update ${branch} from develop" -b ""
+            echo "develop can be merged into develop_to_${{matrix.branch}}"
+            git commit -m "Merge develop into develop_to_${{matrix.branch}}"
+            git push origin develop_to_${{matrix.branch}}
+            gh pr create -B ${{matrix.branch}} --head develop_to_${{matrix.branch}} -t "Update ${{matrix.branch}} from develop" -b ""
           else
-            echo "develop can not be merged into develop_to_${branch}"
+            echo "develop can not be merged into develop_to_${{matrix.branch}}"
             git merge --abort
             payload='{
               "attachments": [{
-                "title": "Conflict detected merging develop into develop_to_'${branch}' on run ID '${GITHUB_RUN_ID}'",
+                "title": "Conflict detected merging develop into develop_to_'${{matrix.branch}}' on run ID '${GITHUB_RUN_ID}'",
                 "title_link": "'${GITHUB_SERVER_URL}'/'${GITHUB_REPOSITORY}'/actions/runs/'${GITHUB_RUN_ID}'",
                 "color": "danger"
               }]
