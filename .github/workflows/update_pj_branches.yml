@@ -40,9 +40,9 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     steps:
+      - uses: actions/checkout@v3
       - name: Create develop_to_pj branch 
         run: |
-          echo $branch
           git branch develop_to_${branch} origin/${branch}
           git push origin develop_to_${branch}
       
