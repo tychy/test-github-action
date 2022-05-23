@@ -58,7 +58,6 @@ jobs:
           else
             echo "develop can not be merged into develop_to_${{matrix.branch}}"
             echo "::set-output name=conflict::1"
-            
           fi
 
       - name: Merge
@@ -69,7 +68,7 @@ jobs:
             gh pr create -B ${{matrix.branch}} --head develop_to_${{matrix.branch}} -t "Update ${{matrix.branch}} from develop" -b ""
 
       - name: Abort and notice
-        if: ${{ steps.dry_run.outpus.conflict == 1 }}
+        if: ${{ steps.dry_run.outputs.conflict == 1 }}
         run: |
           git merge --abort
           payload='{
