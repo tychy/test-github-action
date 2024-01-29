@@ -1,0 +1,74 @@
+name: Update PJ Branches
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+  workflow_dispatch:
+
+jobs:
+  list_pj_branches:
+    runs-on: [self-hosted, dev, standard]
+    if: github.event.pull_request.merged == true
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: List PJ branches
+        id: pj_list
+        run: |
+          git remote set-branches origin '*'
+          git fetch
+          pj_list=$(git branch -r --list 'origin/pj-*' --format='%(refname:short)' | sed 's/origin\///g' | tr '\n' ' ' | awk '{gsub(/[^ ]+/,"\x22&\x22\x2C");print}' | sed 's/\x2C $//')
+          pj_json=$(echo "["${pj_list}"]" | jq -c)
+          echo "::set-output name=branches::${pj_json}"
+    outputs:
+      branches: ${{steps.pj_list.outputs.branches}}
+      
+  update_pj_branches:
+    needs: list_pj_branches
+    strategy:
+      matrix:
+        branch: ${{fromJson(needs.list_pj_branches.outputs.branches)}}
+    runs-on: [self-hosted, dev, standard]
+    if: needs.list_pj_branches.outputs.branches != '[]'
+    env:
+      GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: Create develop_to_pj branch 
+        run: |
+          git remote set-branches origin '*'
+          git fetch
+          git branch develop_to_${{matrix.branch}} origin/${{matrix.branch}}
+          git push origin develop_to_${{matrix.branch}}
+      
+      - name: Dry run git merge
+        id: dry_run
+        run: |
+          git checkout develop_to_${{matrix.branch}}
+          if git merge --no-ff --no-commit origin/develop; then
+            echo "develop can be merged into develop_to_${{matrix.branch}}"
+            echo "::set-output name=conflict::0"
+          else
+            echo "develop can not be merged into develop_to_${{matrix.branch}}"
+            echo "::set-output name=conflict::1"
+          fi
+
+      - name: Merge
+        if: ${{ steps.dry_run.outputs.conflict == 0 }}
+        run: |
+            git commit -m "Merge develop into develop_to_${{matrix.branch}}"
+            git push origin develop_to_${{matrix.branch}}
+            gh pr create -B ${{matrix.branch}} --head develop_to_${{matrix.branch}} -t "Update ${{matrix.branch}} from develop" -b ""
+
+      - name: Abort and notice
+        if: ${{ steps.dry_run.outputs.conflict == 1 }}
+        run: |
+          git merge --abort
+

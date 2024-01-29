@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - pj-*
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        cache: true
+        cache-dependency-path: src
+    - name: Build
+      run: echo "Build"
